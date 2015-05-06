@@ -1,5 +1,6 @@
 import bottle
 import threading
+import calendar
 import psutil
 import time
 import json
@@ -28,7 +29,7 @@ def collect():
     bytes_recv = net.bytes_recv
     bytes_sent = net.bytes_sent
     while True:
-        time.sleep(1)
+        time.sleep(5)
         net = psutil.net_io_counters()
         data.append({
             'time': time.time(),
@@ -42,9 +43,6 @@ def collect():
                 }
             }
         }) 
-        print(bytes_recv)
-        print(net.bytes_recv)
-        print(net.bytes_recv-bytes_recv)
         bytes_recv = net.bytes_recv
         bytes_sent = net.bytes_sent
 

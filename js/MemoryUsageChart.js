@@ -13,7 +13,7 @@ var MemoryUsageChart = React.createClass({
       }
     });
     return (
-      <ScalableChart title='MEMORY USAGE' ydomain={[0, total]} data={memory}/>
+      <ScalableChart kind={StackedAreaChart} title='MEMORY USAGE' ydomain={[0, total]} data={memory}/>
     );
   }
 });

@@ -1,15 +1,16 @@
 
 var LineChart = React.createClass({
-  getInitialState : function() {
+  getInitialState: function() {
     return {
       'width': 800,
     }
   },
 
-  getDefaultProps : function() {
+  getDefaultProps: function() {
     return {
       'height': 600,
       'ydomain': 'auto',
+      'xdomain': 'auto',
     }
   },
 
@@ -30,12 +31,14 @@ var LineChart = React.createClass({
   render: function() {
     // Data must be in the form [{name:..., value:[{time:..., y:...}]}, ...]
     var data = this.props.data;
-    var x = d3.scale.linear().range([0, this.state.width]);
-    var y = d3.scale.linear().range([this.props.height, 0]);
+    var yMargin = 40;
+    var y = d3.scale.linear().range([this.props.height-yMargin, 0]);
+    var x = d3.time.scale().range([0, this.state.width]);
+    var color = d3.scale.category10();
 
     // Create a line graph
     var line = d3.svg.line()
-      .x(function(d) { return x(d.time); })
+      .x(function(d) { return x(ChartUtil.parseDate(d.time)); })
       .y(function(d) { return y(d.y); })
 
     // Scale the y-axis
@@ -49,12 +52,10 @@ var LineChart = React.createClass({
     } 
 
     // Scale the x-axis
-    x.domain(ChartUtil.domain(data, function(d) {
-      return d.time;
+    x.domain(ChartUtil.timeDomain(data, this.props.xdomain));
+    y.domain(ChartUtil.valueDomain(data, this.props.ydomain, function(d) {
+      return d.y;
     }));
-
-    // Color for each data series
-    var color = d3.scale.category10();
 
     // Compute the <path> svg elements
     var paths = data.map(function(d) {
@@ -63,9 +64,25 @@ var LineChart = React.createClass({
       );
     });
 
+    var valueAxis = '';
+    if(this.props.units) {
+      valueAxis = <ValueAxis x={x} y={y} units={this.props.units}/>
+    }
+
+    var highlight = null;
+    if(this.props.highlight) {
+      highlight = <ChartHighlight 
+         height={this.props.height-yMargin} 
+         scale={x} 
+         range={this.props.highlight}/>
+    }
+
     return (
       <svg ref='svg' width='100%' height={this.props.height}>
+        {highlight}
         {paths}
+        <TimeAxis x={x} y={y}/>
+        {valueAxis}
       </svg>
     );
   } 

@@ -4,7 +4,7 @@ var CpuUsageChart = React.createClass({
   render: function() {
     var data = this.props.data;
     var total = 100;
-    var cpu = ['system','user','idle'].map(function(name) {
+    var cpu = ['system','user'].map(function(name) {
       return {
         'name': name,
         'value': data.map(function(d) {
@@ -13,7 +13,7 @@ var CpuUsageChart = React.createClass({
       }
     });
     return (
-      <ScalableChart title='CPU USAGE' ydomain={[0, total]} data={cpu}/>
+      <ScalableChart kind={StackedAreaChart} title='CPU USAGE' ydomain={[0, total]} data={cpu}/>
     );
   }
 });

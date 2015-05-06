@@ -41,6 +41,8 @@ var Grid = ReactBootstrap.Grid;
 var Col = ReactBootstrap.Col;
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
+var Button = ReactBootstrap.Button;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 
 var render = function(data) {
   'use strict';
@@ -61,7 +63,7 @@ var render = function(data) {
       </Sidebar>
       <div id='center'>
         <Cell>
-          <NetUsageChart data={data}/>
+          <CpuUsageChart data={data}/>
         </Cell>
       </div>
     </div>,
@@ -70,6 +72,6 @@ var render = function(data) {
 }
 
 
-setInterval(function() {
+//setInterval(function() {
   $.get('/stats').done(render);
-}, 1000);
+//}, 1000);
