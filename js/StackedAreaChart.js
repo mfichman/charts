@@ -47,27 +47,18 @@ var StackedAreaChart = React.createClass({
 
     // Scale the y-axis
     if(this.props.ydomain=='auto') {
-      var yMax = Number.MIN_VALUE;
-      data.forEach(function(d) {
-        d.value.forEach(function(d) {
-          yMax = Math.max(yMax, d.y+d.y0);
-        });
+      var domain = ChartUtil.domain(data, function(d) {
+         return d.y+d.y0;
       });
-      y.domain([0, yMax*1.2]);
+      y.domain([0, domain[1]*1.2]);
     } else {
       y.domain(this.props.ydomain);
     } 
 
     // Scale the x-axis
-    var xMax = Number.MIN_VALUE;
-    var xMin = Number.MAX_VALUE;
-    data.forEach(function(d) {
-      d.value.forEach(function(d) {
-        xMax = Math.max(xMax, d.time);
-        xMin = Math.min(xMin, d.time);
-      });
-    });
-    x.domain([xMin, xMax]);
+    x.domain(ChartUtil.domain(data, function(d) {
+      return d.time;
+    }));
 
     // Color for each data series
     var color = d3.scale.category20();
@@ -75,7 +66,7 @@ var StackedAreaChart = React.createClass({
     // Compute the <path> svg elements
     var paths = stack(data).map(function(d) {
       return (
-        <g key={d.name}><path d={area(d.value)} fill={color(d.name)}/></g>
+        <g key={d.name}><path d={area(d.value)} color={color(d.name)}/></g>
       ); 
     });
 

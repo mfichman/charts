@@ -1,31 +1,3 @@
-
-var data = [
-  {
-    'name': 'series1',
-    'value': [
-      {time: 0, y: .1},    
-      {time: 1, y: .5},    
-      {time: 2, y: .2},    
-      {time: 3, y: .1},    
-      {time: 4, y: .5},    
-      {time: 5, y: .3},    
-      {time: 6, y: .3},    
-    ]
-  },
-  {
-    'name': 'series2',
-    'value': [
-      {time: 0, y: .1},    
-      {time: 1, y: .3},    
-      {time: 2, y: .1},    
-      {time: 3, y: .3},    
-      {time: 4, y: .1},    
-      {time: 5, y: .3},    
-      {time: 6, y: .1},    
-    ]
-  }
-];
-
 var SidebarButton = React.createClass({
   render: function() {
     var icon;
@@ -65,20 +37,6 @@ var Cell = React.createClass({
   }
 })
 
-var ScalableChart = React.createClass({
-  // Renders a chart with sliders that are used to control the visible area of
-  // the chart.
-  render: function() {
-    return (
-      <div>
-        <h1>{this.props.title}</h1>
-        <StackedAreaChart ydomain={this.props.ydomain} data={this.props.data} height='400'/>
-        <StackedAreaChart ydomain={this.props.ydomain} data={this.props.data} height='100'/>
-      </div>
-    );
-  }
-});
-
 var Grid = ReactBootstrap.Grid;
 var Col = ReactBootstrap.Col;
 var Navbar = ReactBootstrap.Navbar;
@@ -115,14 +73,3 @@ var render = function(data) {
 setInterval(function() {
   $.get('/stats').done(render);
 }, 1000);
-
-
-/*
-      <Grid>
-        <Row>
-          <Col sm={6} md={4}><StackedAreaChart data={data} width='200' height='200'/></Col>
-          <Col sm={6} md={4}><StackedAreaChart data={data} width='200' height='200'/></Col>
-          <Col sm={6} md={4}><StackedAreaChart data={data} width='200' height='200'/></Col>
-        </Row>
-      </Grid>,
-*/

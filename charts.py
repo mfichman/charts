@@ -42,6 +42,9 @@ def collect():
                 }
             }
         }) 
+        print(bytes_recv)
+        print(net.bytes_recv)
+        print(net.bytes_recv-bytes_recv)
         bytes_recv = net.bytes_recv
         bytes_sent = net.bytes_sent
 
