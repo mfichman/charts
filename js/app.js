@@ -28,15 +28,17 @@ var data = [
 
 var SidebarButton = React.createClass({
   render: function() {
-    var content = [];
-    if(this.props.text) {
-      content.push(this.props.text);
-    }
+    var icon;
     if(this.props.icon) {
-      content.push(<ReactBootstrap.Glyphicon glyph={this.props.icon}/>)
+      icon = <ReactBootstrap.Glyphicon glyph={this.props.icon}/>;
     }
     return (
-      <li className={this.props.className}><a href='#'>{content}</a></li>
+      <li className={this.props.className}>
+        <a href='#'>
+          {this.props.text}
+          {icon}
+        </a>
+      </li>
     );
   }
 })
@@ -63,15 +65,33 @@ var Cell = React.createClass({
   }
 })
 
+var ScalableChart = React.createClass({
+  // Renders a chart with sliders that are used to control the visible area of
+  // the chart.
+  render: function() {
+    return (
+      <div>
+        <h1>{this.props.title}</h1>
+        <StackedAreaChart ydomain={this.props.ydomain} data={this.props.data} height='400'/>
+        <StackedAreaChart ydomain={this.props.ydomain} data={this.props.data} height='100'/>
+      </div>
+    );
+  }
+});
+
 var Grid = ReactBootstrap.Grid;
 var Col = ReactBootstrap.Col;
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
 
-(function() {
+var render = function(data) {
   'use strict';
+
+  var data = $.parseJSON(data);
+
   React.render(
     <div>
+      <Navbar brand='Dashboard' fixedTop/>
       <Sidebar>
         <SidebarButton icon='home' className='home-button'/>
         <SidebarButton text='CPU'/>
@@ -81,14 +101,20 @@ var Nav = ReactBootstrap.Nav;
         <SidebarButton text='EVT'/>
         <SidebarButton text='LOG'/>
       </Sidebar>
-      <Navbar brand='Dashboard'/>
-      <Cell>
-        <StackedAreaChart data={data} width='800' height='600'/>
-      </Cell>
+      <div id='center'>
+        <Cell>
+          <NetUsageChart data={data}/>
+        </Cell>
+      </div>
     </div>,
     document.getElementById('content')
   );
-})();
+}
+
+
+setInterval(function() {
+  $.get('/stats').done(render);
+}, 1000);
 
 
 /*

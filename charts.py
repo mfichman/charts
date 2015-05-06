@@ -11,29 +11,39 @@ data = []
 def stats():
     return json.dumps(data)
 
-@bottle.get('/kill')
-def kill():
-    os._exit(0)
-
 @bottle.get('/<path:path>')
 def static(path):
     return bottle.static_file(path, root='.')
+
+@bottle.get('/')
+def index():
+    return bottle.template('views/index.html')
 
 def main():
     bottle.run(port=8080, debug=True)
 
 def collect():
+    psutil.cpu_times_percent()
+    net = psutil.net_io_counters()
+    bytes_recv = net.bytes_recv
+    bytes_sent = net.bytes_sent
     while True:
+        time.sleep(1)
+        net = psutil.net_io_counters()
         data.append({
             'time': time.time(),
             'system': {
-                'cpu': psutil.cpu_times().__dict__,
-                'memory': psutil.virtual_memory().__dict__,
-                'disk': psutil.disk_usage('C:').__dict__,
-                'network': psutil.net_io_counters().__dict__,
+                'cpu': psutil.cpu_times_percent()._asdict(),
+                'memory': psutil.virtual_memory()._asdict(),
+                'disk': psutil.disk_usage('/')._asdict(),
+                'network': {
+                    'bytes_sent': net.bytes_recv-bytes_recv,
+                    'bytes_recv': net.bytes_sent-bytes_sent,
+                }
             }
         }) 
-        time.sleep(1)
+        bytes_recv = net.bytes_recv
+        bytes_sent = net.bytes_sent
 
 if __name__ == '__main__':
     th = threading.Thread(target=collect)

@@ -3,8 +3,7 @@
 /* Global styles */
 
 body {
-//  background-color: rgb(235, 237, 243);
-  background-color: rgb(246, 246, 246);//235, 237, 243);
+  background-color: rgb(236, 236, 236);
 }
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Open Sans';
@@ -19,6 +18,7 @@ p, div {
 /* Top navbar */
 
 .navbar-default {
+  z-index: 0;
   background-color: white;
   border: none;
   border-radius: 0px;
@@ -35,31 +35,26 @@ p, div {
   line-height: 70px;
   height: 70px;
   padding-top: 0px;
-  padding-left: 32px;
-  font-size: 20px;
+  padding-left: 94px;
+  font-size: 24px;
 }
 
-/* Hide for mobile, show later */
+/* Sidebar navigation */
 .sidebar {
   display: none;
   background-color: rgb(47, 50, 58); /* Basic dark background color */
   border: none;
   box-shadow: 0px -2px 4px rgb(32, 34, 40);
-}
-@media (min-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0px;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  }
-}
 
-/* Sidebar navigation */
+  position: fixed;
+  top: 0px;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
 .nav-sidebar > li > a {
   border-top: 1px solid rgb(58, 60, 68);
   border-left: 1px solid rgb(58, 60, 68);
@@ -111,10 +106,20 @@ p, div {
 
 /* Cells */
 
+#center {
+  padding-top: 76px;
+  margin: 20px;
+}
+#center h1 {
+  font-size: 16px;
+  color: rgb(170, 170, 170);
+  margin-top: 0px;
+  letter-spacing: .1em;
+}
+
 .cell {
   background-color: white;
   width: auto;
-  margin: 20px;
   padding: 20px;
   border-radius: 4px;
   box-shadow: 0px 1px 3px rgb(226, 226, 226);
