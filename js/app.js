@@ -1,33 +1,11 @@
-var SidebarButton = React.createClass({
-  render: function() {
-    var icon;
-    if(this.props.icon) {
-      icon = <ReactBootstrap.Glyphicon glyph={this.props.icon}/>;
-    }
-    return (
-      <li className={this.props.className}>
-        <a href='#'>
-          {this.props.text}
-          {icon}
-        </a>
-      </li>
-    );
-  }
-})
+var Grid = ReactBootstrap.Grid;
+var Col = ReactBootstrap.Col;
+var Navbar = ReactBootstrap.Navbar;
+var Nav = ReactBootstrap.Nav;
+var Button = ReactBootstrap.Button;
+var ButtonToolbar = ReactBootstrap.ButtonToolbar;
 
-var Sidebar = React.createClass({
-  render: function() {
-    return (
-      <div className='sidebar'>
-        <ul className='nav nav-sidebar'>
-          {this.props.children}
-        </ul>
-      </div>
-    );
-  }
-})
-
-var Cell = React.createClass({
+var Panel = React.createClass({
   render: function() {
     return (
       <div className='cell'>
@@ -37,12 +15,51 @@ var Cell = React.createClass({
   }
 })
 
-var Grid = ReactBootstrap.Grid;
-var Col = ReactBootstrap.Col;
-var Navbar = ReactBootstrap.Navbar;
-var Nav = ReactBootstrap.Nav;
-var Button = ReactBootstrap.Button;
-var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+var App = React.createClass({
+  getInitialState: function() {
+    return {
+      'activePanel': MemoryUsageChart,
+      'sidebarButton': ['CPU','MEM','NET','ERR','EVT','LOG'],
+      'panel': {
+        'CPU': CpuUsageChart,
+        'MEM': MemoryUsageChart,
+        'NET': NetUsageChart,
+        'ERR': null,
+        'EVT': null,
+        'LOG': null,
+      },
+    }
+  },
+
+  onClick: function(name) {
+    this.setState({'activePanel': this.state.panel[name]});
+  },
+
+  render: function() {
+    var activePanel = React.createElement(this.state.activePanel, {
+      data: this.props.data,
+    });
+
+    var sidebarButtons = this.state.sidebarButton.map(function(button) {
+      var click = this.onClick.bind(this, button);
+      return (<SidebarButton onClick={click} key={button} text={button}/>);
+    }, this);
+
+    return (
+      <div>
+        <Navbar brand='Dashboard' fixedTop/>
+        <Sidebar>
+          <SidebarButton icon='home' className='home-button'/>
+          {sidebarButtons}
+        </Sidebar>
+        <div id='center'>
+          <Panel>{activePanel}</Panel>
+        </div>
+      </div>
+    )
+  }
+
+});
 
 var render = function(data) {
   'use strict';
@@ -50,28 +67,12 @@ var render = function(data) {
   var data = $.parseJSON(data);
 
   React.render(
-    <div>
-      <Navbar brand='Dashboard' fixedTop/>
-      <Sidebar>
-        <SidebarButton icon='home' className='home-button'/>
-        <SidebarButton text='CPU'/>
-        <SidebarButton text='MEM'/>
-        <SidebarButton text='NET'/>
-        <SidebarButton text='ERR'/>
-        <SidebarButton text='EVT'/>
-        <SidebarButton text='LOG'/>
-      </Sidebar>
-      <div id='center'>
-        <Cell>
-          <CpuUsageChart data={data}/>
-        </Cell>
-      </div>
-    </div>,
+    <App data={data}/>,
     document.getElementById('content')
   );
 }
 
 
-//setInterval(function() {
+setInterval(function() {
   $.get('/stats').done(render);
-//}, 1000);
+}, 5000);

@@ -8,42 +8,32 @@ var ScalableChart = React.createClass({
     return {
       'slider0': 0,
       'slider1': 1000,
-      'minTime': (function() {
-        var date = new Date();
-        date.setHours(date.getHours()-1);
-        return date;
-      })()
+      'timeRangeButton': ['MONTH','WEEK','DAY','HOUR','5 MIN'],
+      'timeRange': 'HOUR',
     }
   },
 
-  onMonth: function(evt) {
+  minTime: function() {
+    // Computes the min time visible in the chart
     var date = new Date();
-    date.setMonth(date.getMonth()-1);
-    this.setState({minTime: date});
+    if(this.state.timeRange=='MONTH') {
+      date.setMonth(date.getMonth()-1);
+    } else if(this.state.timeRange=='WEEK') {
+      date.setDate(date.getDate()-7);
+    } else if(this.state.timeRange=='DAY') {
+      date.setDate(date.getDate()-1);
+    } else if(this.state.timeRange=='HOUR') {
+      date.setHours(date.getHours()-1);
+    } else if(this.state.timeRange=='5 MIN') {
+      date.setMinutes(date.getMinutes()-5);
+    } else {
+      // invalid
+    }
+    return date;
   },
 
-  onWeek: function(evt) {
-    var date = new Date();
-    date.setDate(date.getDate()-7);
-    this.setState({minTime: date});
-  },
-
-  onDay: function(evt) {
-    var date = new Date();
-    date.setDate(date.getDate()-1);
-    this.setState({minTime: date});
-  },
-
-  onHour: function(evt) {
-    var date = new Date();
-    date.setHours(date.getHours()-1);
-    this.setState({minTime: date});
-  },
-
-  onMin: function(evt) {
-    var date = new Date();
-    date.setMinutes(date.getMinutes()-5);
-    this.setState({minTime: date});
+  onClick: function(button) {
+    this.setState({timeRange: button});
   },
 
   onSlider0Change: function(evt) {
@@ -63,7 +53,7 @@ var ScalableChart = React.createClass({
     var sliderMax = Math.max(this.state.slider0, this.state.slider1)/range;
 
     // Filter dates older than the requested range.
-    var minTime = this.state.minTime;
+    var minTime = this.minTime();
     var data = this.props.data.map(function(d) {
       return {
         'name': d.name,
@@ -102,14 +92,15 @@ var ScalableChart = React.createClass({
       height: 100,
     });
 
+    var timeRangeButton = this.state.timeRangeButton.map(function(button) {
+      var click = this.onClick.bind(this, button);
+      return (<Button onClick={click} bsSize='small' key={button}>{button}</Button>);
+    },this);
+
     return (
       <div className='chart'>
         <ButtonToolbar small className='pull-right'>
-          <Button onClick={this.onMonth} bsSize='small'>MONTH</Button>
-          <Button onClick={this.onWeek} bsSize='small'>WEEK</Button>
-          <Button onClick={this.onDay} bsSize='small'>DAY</Button>
-          <Button onClick={this.onHour} bsSize='small'>HOUR</Button>
-          <Button onClick={this.onMin} bsSize='small'>5 MIN</Button>
+          {timeRangeButton}
         </ButtonToolbar>
         <h1>{this.props.title}</h1>
         {chart}

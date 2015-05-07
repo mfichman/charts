@@ -19,7 +19,7 @@ var NetUsageChart = React.createClass({
       }
     });
     return (
-      <ScalableChart kind={LineChart} title='NETWORK USAGE' ydomain='auto' units='MB/s' data={net}/>
+      <ScalableChart kind={LineChart} title='NETWORK USAGE' units='MB/s' data={net}/>
     );
   }
 });

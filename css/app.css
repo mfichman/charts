@@ -115,6 +115,7 @@ p, div {
   background-color: white;
   width: auto;
   padding: 20px;
+  margin-bottom: 20px;
   border-radius: 4px;
   box-shadow: 0px 1px 3px rgb(226, 226, 226);
 }
