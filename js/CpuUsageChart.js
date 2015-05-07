@@ -13,7 +13,7 @@ var CpuUsageChart = React.createClass({
       }
     });
     return (
-      <ScalableChart kind={StackedAreaChart} title='CPU USAGE' ydomain={[0, total]} data={cpu}/>
+      <ScalableChart kind={StackedAreaChart} title='CPU USAGE' units='%' ydomain={[0, total]} data={cpu}/>
     );
   }
 });
