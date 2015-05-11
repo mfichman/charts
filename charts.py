@@ -29,7 +29,7 @@ def collect():
     bytes_recv = net.bytes_recv
     bytes_sent = net.bytes_sent
     while True:
-        time.sleep(5)
+        time.sleep(1)
         net = psutil.net_io_counters()
         data.append({
             'time': time.time(),

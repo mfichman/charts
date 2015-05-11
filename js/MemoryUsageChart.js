@@ -8,7 +8,7 @@ var MemoryUsageChart = React.createClass({
 
     var data = this.props.data;
     //var total = 100;
-    var memory = ['used','wired','free'].map(function(name) {
+    var memory = ['used','free'].map(function(name) {
       return {
         'name': name,
         'value': data.map(function(d) {

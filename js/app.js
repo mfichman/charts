@@ -1,49 +1,100 @@
 var Grid = ReactBootstrap.Grid;
 var Col = ReactBootstrap.Col;
+var Row = ReactBootstrap.Row;
 var Navbar = ReactBootstrap.Navbar;
 var Nav = ReactBootstrap.Nav;
 var Button = ReactBootstrap.Button;
 var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+var Panel = ReactBootstrap.Panel;
 
-var Panel = React.createClass({
+var AggregateView = React.createClass({
+  // Shows resource usage as an aggregate.
   render: function() {
+    // FIXME: Extract cluster-aggregate data and pass to the scalable chart.
+    var data = this.props.data;
+    var chart = React.createElement(this.props.chartType, {data: data});
+
+    // data.hostResourceUsage.map({
+    // });
+
     return (
-      <div className='cell'>
-        {this.props.children}
-      </div>
+      <Row><Col xs={12}><Panel>{chart}</Panel></Col></Row>
     )
   }
-})
+});
+
+var HostGridView = React.createClass({
+  // Shows the resource usage of each host as a grid of individual charts, one
+  // per host.
+  render: function() {
+    return (<Row/>);
+  }
+});
+
+var HostView = React.createClass({
+  // Shows resource usage of all tasks for a host, stacked.
+  render: function() {
+    return (<Row/>);
+  }
+});
 
 var App = React.createClass({
   getInitialState: function() {
     return {
-      'activePanel': MemoryUsageChart,
       'sidebarButton': ['CPU','MEM','NET','ERR','EVT','LOG'],
-      'panel': {
-        'CPU': CpuUsageChart,
-        'MEM': MemoryUsageChart,
-        'NET': NetUsageChart,
-        'ERR': null,
-        'EVT': null,
-        'LOG': null,
-      },
+      'viewType': AggregateView,
+      'chartType': CpuUsageChart,
     }
   },
 
-  onClick: function(name) {
-    this.setState({'activePanel': this.state.panel[name]});
+  onSidebarButtonClick: function(name) {
+    // User clicked the chart sidebar button. Decide which kind of chart to
+    // show, and update it.
+    var chartType = this.state.chartType;
+    if(name=='CPU') {
+      chartType = CpuUsageChart;
+    } else if(name=='MEM') {
+      chartType = MemoryUsageChart;
+    } else if(name=='NET') {
+      chartType = NetUsageChart;
+    } else if(name=='ERR') {
+    } else if(name=='EVT') {
+    } else if(name=='LOG') {
+    } else {
+    }
+    this.setState({'chartType': chartType});
+  },
+
+  onViewTypeClick: function() {
+    // Toggle the view type.
+    var viewType
+    if(this.state.viewType==AggregateView) {
+      viewType = HostGridView;
+    } else if(this.state.viewType==HostGridView) {
+      viewType = AggregateView;
+    }
+    this.setState({'viewType': viewType});
   },
 
   render: function() {
-    var activePanel = React.createElement(this.state.activePanel, {
+    // Select the view to show, and render it
+    var view = React.createElement(this.state.viewType, {
       data: this.props.data,
+      chartType: this.state.chartType,
     });
 
     var sidebarButtons = this.state.sidebarButton.map(function(button) {
-      var click = this.onClick.bind(this, button);
+      var click = this.onSidebarButtonClick.bind(this, button);
       return (<SidebarButton onClick={click} key={button} text={button}/>);
     }, this);
+
+    var viewTypeText;
+    if(this.state.viewType==AggregateView) {
+      viewTypeText = 'show per-host statistics';
+    } else if(this.state.viewType==HostGridView) {
+      viewTypeText = 'show aggregate statistics';
+    } else {
+    }
 
     return (
       <div>
@@ -52,9 +103,14 @@ var App = React.createClass({
           <SidebarButton icon='home' className='home-button'/>
           {sidebarButtons}
         </Sidebar>
-        <div id='center'>
-          <Panel>{activePanel}</Panel>
-        </div>
+        <Grid fluid>
+          <ButtonToolbar className='pull-right'>
+            <Button bsStyle='link' onClick={this.onViewTypeClick}>
+                {viewTypeText}
+            </Button>
+          </ButtonToolbar>
+          {view}
+        </Grid>
       </div>
     )
   }
@@ -62,8 +118,6 @@ var App = React.createClass({
 });
 
 var render = function(data) {
-  'use strict';
-
   var data = $.parseJSON(data);
 
   React.render(
@@ -71,7 +125,6 @@ var render = function(data) {
     document.getElementById('content')
   );
 }
-
 
 setInterval(function() {
   $.get('/stats').done(render);
