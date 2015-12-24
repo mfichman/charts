@@ -4,7 +4,7 @@ var TimeAxis = React.createClass({
   render: function() {
     var x = this.props.x;
     var y = this.props.y;
-    var timeFormat = d3.time.format('%-H:%M:%S %p');
+    var timeFormat = d3.time.format('-%m/-%d %H:%M:%S');
     var ticks = x.ticks(3).map(function(tick) {
       var label = timeFormat(tick);
       return (
